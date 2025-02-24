@@ -31,30 +31,29 @@ CREATE TABLE Borrowed_Books (
     FOREIGN KEY (member_id) REFERENCES Members(member_id)
 );
 
-
 -- insert
 INSERT INTO Authors (name, birth_year) VALUES
-('J.K. Rowling', 1965),
-('George R.R. Martin', 1948),
-('Stephen King', 1947),
-('Agatha Christie', 1890),
-('Haruki Murakami', 1949),
-('Toni Morrison', 1931);
+('Si kuan', 1945),
+('Almahsol', 1928),
+('Renal', 1999),
+('Cuyos', 1890),
+('Tabigue', 1979),
+('Mahlor', 1991);
 
 INSERT INTO Books (title, author_id, published_year, genre) VALUES
-('Harry Potter and the Philosopher''s Stone', 1, 1997, 'Fantasy'),
-('A Game of Thrones', 2, 1996, 'Fantasy'),
-('The Shining', 3, 1977, 'Horror'),
-('Murder on the Orient Express', 4, 1934, 'Mystery'),
-('Norwegian Wood', 5, 1987, 'Fiction'),
-('The Casual Vacancy', 1, 2012, 'Fiction'),
-('A Dance with Dragons', 2, 2011, 'Fantasy'),
-('11/22/63', 3, 2011, 'Science Fiction');
+('You are my shunshine LBJ', 1, 1945, 'Fantasy'),
+('Juan Tamad', 2, 1956, 'Fantasy'),
+('Dionela', 3, 2010, 'Horror'),  -- Corrected published_year to be after author's birth year
+('Niiiinnneerrss', 4, 1950, 'Mystery'),  -- Corrected published_year to be after author's birth year
+('OY OY OY', 5, 2000, 'Fiction'),  -- Corrected published_year to be after author's birth year
+('My sql', 5, 2014, 'Fiction'),
+('17:38', 6, 2011, 'Fantasy'),  -- Corrected author_id to an existing author
+('Skibidi', 6, 2021, 'Science Fiction');
 
 INSERT INTO Members (name, email, join_date) VALUES
-('Alice Johnson', 'alice@example.com', '2020-01-15'),
-('Bob Smith', 'bob@example.com', '2019-05-22'),
-('Charlie Brown', 'charlie@example.com', '2021-03-10');
+('Membro uno', 'uno@example.com', '2020-01-15'),
+('Membro dos', 'dos@example.com', '2019-05-22'),
+('Membro tres', 'tres@example.com', '2021-03-10');
 
 INSERT INTO Borrowed_Books (book_id, member_id, borrow_date, return_date) VALUES
 (1, 1, '2023-01-01', '2023-01-15'),
@@ -62,7 +61,6 @@ INSERT INTO Borrowed_Books (book_id, member_id, borrow_date, return_date) VALUES
 (3, 3, '2023-03-01', '2023-03-15'),
 (6, 1, '2023-04-01', NULL),
 (7, 2, '2023-05-01', '2023-05-15');
-
 
 -- fetch
 SELECT title, published_year
@@ -86,6 +84,3 @@ SELECT A.name, COUNT(B.book_id) AS book_count
 FROM Authors A
 LEFT JOIN Books B ON A.author_id = B.author_id
 GROUP BY A.name;
-
-
-
