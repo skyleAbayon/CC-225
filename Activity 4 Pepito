@@ -1,0 +1,102 @@
+-- Create the Authors table
+CREATE TABLE Authors (
+    author_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    birth_year INT
+);
+
+-- Create the Members table
+CREATE TABLE Members (
+    member_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    join_date DATE
+);
+
+-- Create the Books table
+CREATE TABLE Books (
+    book_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    author_id INT,
+    published_year INT,
+    genre VARCHAR(255),
+    FOREIGN KEY (author_id) REFERENCES Authors(author_id)
+);
+
+-- Create the Borrowed Books table
+CREATE TABLE BorrowedBooks (
+    borrow_id INT PRIMARY KEY AUTO_INCREMENT,
+    book_id INT,
+    member_id INT,
+    borrow_date DATE,
+    return_date DATE,
+    FOREIGN KEY (book_id) REFERENCES Books(book_id),
+    FOREIGN KEY (member_id) REFERENCES Members(member_id)
+);
+
+-- TASK 1: Insert Data
+
+-- Insert Authors
+INSERT INTO Authors (name, birth_year) VALUES
+('J.R.R. Tolkien', 1892),
+('George R.R. Martin', 1948),
+('Jane Austen', 1775),
+('Stephen King', 1947),
+('Agatha Christie', 1890);
+
+-- Insert Members
+INSERT INTO Members (name, email, join_date) VALUES
+('John Doe', 'john.doe@example.com', '2023-01-15'),
+('Jane Smith', 'jane.smith@example.com', '2023-02-20'),
+('David Lee', 'david.lee@example.com', '2023-03-10'),
+('Sarah Jones', 'sarah.jones@example.com', '2023-04-01'); -- Added a member who hasn't borrowed a book
+
+
+-- Insert Books
+INSERT INTO Books (title, author_id, published_year, genre) VALUES
+('The Hobbit', 1, 1937, 'Fantasy'),
+('The Lord of the Rings', 1, 1954, 'Fantasy'),
+('A Game of Thrones', 2, 1996, 'Fantasy'),
+('Pride and Prejudice', 3, 1813, 'Romance'),
+('The Outsider', 4, 2018, 'Horror'),
+('And Then There Were None', 5, 1939, 'Mystery');
+
+-- Insert Borrowed Books
+INSERT INTO BorrowedBooks (book_id, member_id, borrow_date, return_date) VALUES
+(1, 1, '2023-10-26', '2023-11-02'),
+(3, 2, '2023-10-27', NULL),
+(2, 1, '2023-10-28', '2023-11-05');
+
+
+-- TASK 2: Find books published after 2000
+SELECT 'TASK 2: Books published after 2000' AS Task, title
+FROM Books
+WHERE published_year > 2000;
+
+-- TASK 3: Members who borrowed at least one book (INNER JOIN - only shows members who HAVE borrowed)
+SELECT 'TASK 3 (INNER JOIN): Members who borrowed at least one book' AS Task, m.name
+FROM Members m
+INNER JOIN BorrowedBooks bb ON m.member_id = bb.member_id;
+
+-- TASK 3 (LEFT JOIN): All Members, showing borrowed books or NULL if they haven't borrowed
+SELECT 'TASK 3 (LEFT JOIN): All Members and borrowed books' AS Task, m.name, b.title AS borrowed_book
+FROM Members m
+LEFT JOIN BorrowedBooks bb ON m.member_id = bb.member_id
+LEFT JOIN Books b ON bb.book_id = b.book_id;  -- Added join to get book title
+
+-- TASK 4: Books and their authors
+SELECT 'TASK 4: Books and their authors' AS Task, b.title, a.name AS author_name
+FROM Books b
+INNER JOIN Authors a ON b.author_id = a.author_id;
+
+-- TASK 5: Books borrowed but not returned
+SELECT 'TASK 5: Books borrowed but not returned' AS Task, b.title
+FROM Books b
+INNER JOIN BorrowedBooks bb ON b.book_id = bb.book_id
+WHERE bb.return_date IS NULL;
+
+-- TASK 6: Count books written by each author
+SELECT 'TASK 6: Count books written by each author' AS Task, a.name, COUNT(b.book_id) AS number_of_books
+FROM Authors a
+LEFT JOIN Books b ON a.author_id = b.author_id
+GROUP BY a.name;

@@ -1,0 +1,86 @@
+-- create
+CREATE TABLE Authors (
+    author_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    birth_year INT
+);
+
+CREATE TABLE Books (
+    book_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    author_id INT,
+    published_year INT,
+    genre VARCHAR(100),
+    FOREIGN KEY (author_id) REFERENCES Authors(author_id)
+);
+
+CREATE TABLE Members (
+    member_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    join_date DATE
+);
+
+CREATE TABLE Borrowed_Books (
+    borrow_id INT PRIMARY KEY AUTO_INCREMENT,
+    book_id INT,
+    member_id INT,
+    borrow_date DATE,
+    return_date DATE,
+    FOREIGN KEY (book_id) REFERENCES Books(book_id),
+    FOREIGN KEY (member_id) REFERENCES Members(member_id)
+);
+
+-- insert
+INSERT INTO Authors (name, birth_year) VALUES
+('Si kuan', 1945),
+('Almahsol', 1928),
+('Renal', 1999),
+('Cuyos', 1890),
+('Tabigue', 1979),
+('Mahlor', 1991);
+
+INSERT INTO Books (title, author_id, published_year, genre) VALUES
+('You are my shunshine LBJ', 1, 1945, 'Fantasy'),
+('Juan Tamad', 2, 1956, 'Fantasy'),
+('Dionela', 3, 2010, 'Horror'),  -- Corrected published_year to be after author's birth year
+('Niiiinnneerrss', 4, 1950, 'Mystery'),  -- Corrected published_year to be after author's birth year
+('OY OY OY', 5, 2000, 'Fiction'),  -- Corrected published_year to be after author's birth year
+('My sql', 5, 2014, 'Fiction'),
+('17:38', 6, 2011, 'Fantasy'),  -- Corrected author_id to an existing author
+('Skibidi', 6, 2021, 'Science Fiction');
+
+INSERT INTO Members (name, email, join_date) VALUES
+('Membro uno', 'uno@example.com', '2020-01-15'),
+('Membro dos', 'dos@example.com', '2019-05-22'),
+('Membro tres', 'tres@example.com', '2021-03-10');
+
+INSERT INTO Borrowed_Books (book_id, member_id, borrow_date, return_date) VALUES
+(1, 1, '2023-01-01', '2023-01-15'),
+(2, 2, '2023-02-01', NULL),
+(3, 3, '2023-03-01', '2023-03-15'),
+(6, 1, '2023-04-01', NULL),
+(7, 2, '2023-05-01', '2023-05-15');
+
+-- fetch
+SELECT title, published_year
+FROM Books
+WHERE published_year > 2000;
+
+SELECT DISTINCT M.name
+FROM Members M
+JOIN Borrowed_Books BB ON M.member_id = BB.member_id;
+
+SELECT B.title, A.name AS author_name
+FROM Books B
+JOIN Authors A ON B.author_id = A.author_id;
+
+SELECT B.title
+FROM Books B
+JOIN Borrowed_Books BB ON B.book_id = BB.book_id
+WHERE BB.return_date IS NULL;
+
+SELECT A.name, COUNT(B.book_id) AS book_count
+FROM Authors A
+LEFT JOIN Books B ON A.author_id = B.author_id
+GROUP BY A.name;
