@@ -1,0 +1,91 @@
+-- create
+CREATE TABLE Authors (
+    author_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    birth_year INT
+);
+
+CREATE TABLE Books (
+    book_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    author_id INT,
+    published_year INT,
+    genre VARCHAR(100),
+    FOREIGN KEY (author_id) REFERENCES Authors(author_id)
+);
+
+CREATE TABLE Members (
+    member_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    join_date DATE
+);
+
+CREATE TABLE Borrowed_Books (
+    borrow_id INT PRIMARY KEY AUTO_INCREMENT,
+    book_id INT,
+    member_id INT,
+    borrow_date DATE,
+    return_date DATE,
+    FOREIGN KEY (book_id) REFERENCES Books(book_id),
+    FOREIGN KEY (member_id) REFERENCES Members(member_id)
+);
+
+
+-- insert
+INSERT INTO Authors (name, birth_year) VALUES
+('J.K. Rowling', 1965),
+('George R.R. Martin', 1948),
+('Stephen King', 1947),
+('Agatha Christie', 1890),
+('Haruki Murakami', 1949),
+('Toni Morrison', 1931);
+
+INSERT INTO Books (title, author_id, published_year, genre) VALUES
+('Harry Potter and the Philosopher''s Stone', 1, 1997, 'Fantasy'),
+('A Game of Thrones', 2, 1996, 'Fantasy'),
+('The Shining', 3, 1977, 'Horror'),
+('Murder on the Orient Express', 4, 1934, 'Mystery'),
+('Norwegian Wood', 5, 1987, 'Fiction'),
+('The Casual Vacancy', 1, 2012, 'Fiction'),
+('A Dance with Dragons', 2, 2011, 'Fantasy'),
+('11/22/63', 3, 2011, 'Science Fiction');
+
+INSERT INTO Members (name, email, join_date) VALUES
+('Alice Johnson', 'alice@example.com', '2020-01-15'),
+('Bob Smith', 'bob@example.com', '2019-05-22'),
+('Charlie Brown', 'charlie@example.com', '2021-03-10');
+
+INSERT INTO Borrowed_Books (book_id, member_id, borrow_date, return_date) VALUES
+(1, 1, '2023-01-01', '2023-01-15'),
+(2, 2, '2023-02-01', NULL),
+(3, 3, '2023-03-01', '2023-03-15'),
+(6, 1, '2023-04-01', NULL),
+(7, 2, '2023-05-01', '2023-05-15');
+
+
+-- fetch
+SELECT title, published_year
+FROM Books
+WHERE published_year > 2000;
+
+SELECT DISTINCT M.name
+FROM Members M
+JOIN Borrowed_Books BB ON M.member_id = BB.member_id;
+
+SELECT B.title, A.name AS author_name
+FROM Books B
+JOIN Authors A ON B.author_id = A.author_id;
+
+SELECT B.title
+FROM Books B
+JOIN Borrowed_Books BB ON B.book_id = BB.book_id
+WHERE BB.return_date IS NULL;
+
+SELECT A.name, COUNT(B.book_id) AS book_count
+FROM Authors A
+LEFT JOIN Books B ON A.author_id = B.author_id
+GROUP BY A.name;
+
+
+
