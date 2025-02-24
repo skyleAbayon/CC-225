@@ -1,0 +1,34 @@
+-- Authors Table (modified as per your specifications)
+CREATE TABLE Authors (
+    author_id INT PRIMARY KEY AUTO_INCREMENT,  -- Auto-incrementing primary key
+    name VARCHAR(255) NOT NULL,
+    birth_year INT
+);
+
+INSERT INTO Authors (name, birth_year) VALUES  -- Note: author_id is auto-generated
+('J.R.R. Tolkien', 1892),
+('George R.R. Martin', 1948),
+('Jane Austen', 1775),
+('Stephen King', 1947),
+('Agatha Christie', 1890);
+
+-- Books Table (modified as per your specifications)
+CREATE TABLE Books (
+    book_id INT PRIMARY KEY AUTO_INCREMENT,  -- Auto-incrementing primary key
+    title VARCHAR(255) NOT NULL,
+    author_id INT,
+    published_year INT,
+    genre VARCHAR(255),
+    FOREIGN KEY (author_id) REFERENCES Authors(author_id)
+);
+
+INSERT INTO Books (title, author_id, published_year, genre) VALUES  -- Note: book_id is auto-generated
+('The Hobbit', 1, 1937, 'Fantasy'),
+('A Game of Thrones', 2, 1996, 'Fantasy'),
+('Pride and Prejudice', 3, 1813, 'Romance'),
+('The Shining', 4, 1977, 'Horror'),
+('And Then There Were None', 5, 1939, 'Mystery');
+
+-- ... (Members and BorrowedBooks tables remain as specified in the previous response)
+
+-- ... (Data retrieval queries remain the same or can be modified to use the new columns)
