@@ -1,0 +1,81 @@
+CREATE TABLE Doctors (
+    doctor_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    specialty VARCHAR(100) NOT NULL,
+    years_experience INT NOT NULL
+);
+
+CREATE TABLE Patients (
+    patient_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    age INT NOT NULL,
+    gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    contact_details VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Appointments (
+    appointment_id INT PRIMARY KEY AUTO_INCREMENT,
+    patient_id INT NOT NULL,
+    doctor_id INT NOT NULL,
+    appointment_date DATE NOT NULL,
+    status ENUM('Scheduled', 'Completed', 'Cancelled') NOT NULL,
+    FOREIGN KEY (patient_id) REFERENCES Patients(patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id)
+);
+
+CREATE TABLE Treatments (
+    treatment_id INT PRIMARY KEY AUTO_INCREMENT,
+    appointment_id INT NOT NULL,
+    diagnosis VARCHAR(255) NOT NULL,
+    prescribed_medication VARCHAR(255) NOT NULL,
+    treatment_date DATE NOT NULL,
+    FOREIGN KEY (appointment_id) REFERENCES Appointments(appointment_id)
+);
+
+
+INSERT INTO Doctors (name, specialty, years_experience) VALUES
+('Dr. Antonio Dela Cruz', 'Dermatology', 7),
+('Dr. Maria Teresa Santos', 'Pediatrics', 13),
+('Dr. Rodrigo "Rog" Mendez', 'Dentistry', 5),
+('Dr. Juan Miguel Pardo', 'Psychiatry', 18);
+
+INSERT INTO Patients (name, age, gender, contact_details) VALUES
+('Isabel "Iza" Tagalog', 28, 'Female', 'iza_tagalog25@example.com'),
+('Carlos Bautista', 52, 'Male', 'carlosbautista33@example.com'),
+('Jessica Reyes', 39, 'Female', 'jessica.reyes45@example.com');
+
+INSERT INTO Appointments (patient_id, doctor_id, appointment_date, status) VALUES
+(1, 1, '2025-04-05', 'Cancelled'),
+(2, 3, '2025-04-07', 'Completed'),
+(3, 2, '2025-04-09', 'Scheduled');
+
+INSERT INTO Treatments (appointment_id, diagnosis, prescribed_medication, treatment_date) VALUES
+(1, 'Eczema', 'Topical Steroids', '2025-04-05'),
+(2, 'Dental Cleaning', 'Fluoride Gel', '2025-04-07'),
+(3, 'Childhood Asthma', 'Inhaler', '2025-04-09');
+
+
+
+SELECT name, specialty, years_experience FROM Doctors;
+
+
+SELECT * FROM Appointments WHERE status = 'Scheduled';
+
+
+SELECT d.name AS doctor_name, COUNT(DISTINCT a.patient_id) AS patient_count
+FROM Doctors d
+LEFT JOIN Appointments a ON d.doctor_id = a.doctor_id
+WHERE a.status = 'Completed'
+GROUP BY d.name;
+
+
+SELECT p.name AS patient_name, t.diagnosis
+FROM Patients p
+JOIN Appointments a ON p.patient_id = a.patient_id
+JOIN Treatments t ON a.appointment_id = t.appointment_id;
+
+
+SELECT name, specialty, years_experience 
+FROM Doctors 
+ORDER BY years_experience DESC 
+LIMIT 1;
