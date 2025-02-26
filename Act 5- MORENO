@@ -1,0 +1,77 @@
+
+CREATE TABLE Doctors (
+    DoctorID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Specialty VARCHAR(100),
+    YearsOfExperience INT
+);
+
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Age INT,
+    Gender VARCHAR(10),
+    ContactDetails VARCHAR(255)
+);
+
+
+CREATE TABLE Appointments (
+    AppointmentID INT PRIMARY KEY,
+    PatientID INT,
+    DoctorID INT,
+    AppointmentDate DATE,
+    Status VARCHAR(20),
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+);
+
+CREATE TABLE Treatments (
+    TreatmentID INT PRIMARY KEY,
+    AppointmentID INT,
+    Diagnosis VARCHAR(255),
+    PrescribedMedication VARCHAR(255),
+    TreatmentDate DATE,
+    FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID)
+);
+
+INSERT INTO Doctors (DoctorID, Name, Specialty, YearsOfExperience) VALUES
+(1, 'Dr. Harison', 'Cardiology', 10),
+(2, 'Dr. Juan jay', 'Neurology', 10),
+(3, 'Dr. Jerald', 'Orthopedics', 15),
+(4, 'Dr. Jamesick', 'Pediatrics', 11);
+
+INSERT INTO Patients (PatientID, Name, Age, Gender, ContactDetails) VALUES
+(1, 'Alexa Marie', 36, 'Female', 'alexa.marie@example.com'),
+(2, 'Joanna Ly', 25, Female', 'joanna.ly@example.com'),
+(3, 'Ryan jay', 45, 'Male', 'ryan.jay@example.com');
+
+INSERT INTO Appointments (AppointmentID, PatientID, DoctorID, AppointmentDate, Status) VALUES
+(1, 1, 1, '2025-02-20', 'Completed'),
+(2, 2, 2, '2025-02-21', 'Completed'),
+(3, 3, 3, '2025-02-22', 'Scheduled');
+
+INSERT INTO Treatments (TreatmentID, AppointmentID, Diagnosis, PrescribedMedication, TreatmentDate) VALUES
+(1, 1, 'Hypertension', 'Lisinopril', '2025-02-20'),
+(2, 3, 'Fracture', 'Painkillers', '2025-02-22');
+
+SELECT Name, Specialty, YearsOfExperience
+FROM Doctors;
+
+SELECT AppointmentID, PatientID, DoctorID, AppointmentDate
+FROM Appointments
+WHERE Status = 'Scheduled';
+
+SELECT DoctorID, COUNT(DISTINCT PatientID) AS NumberOfPatients
+FROM Appointments
+WHERE Status = 'Completed'
+GROUP BY DoctorID;
+
+SELECT Patients.Name AS PatientName, Treatments.Diagnosis
+FROM Treatments
+JOIN Appointments ON Treatments.AppointmentID = Appointments.AppointmentID
+JOIN Patients ON Appointments.PatientID = Patients.PatientID;
+
+SELECT Name, Specialty, YearsOfExperience
+FROM Doctors
+ORDER BY YearsOfExperience DESC
+LIMIT 1;
