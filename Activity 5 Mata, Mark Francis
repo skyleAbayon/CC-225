@@ -1,0 +1,82 @@
+-- create
+CREATE TABLE Doctors (
+    DoctorID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Specialty VARCHAR(100) NOT NULL,
+    YearsOfExperience INT NOT NULL
+);
+
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Age INT NOT NULL,
+    Gender VARCHAR(10) NOT NULL,
+    ContactDetails VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Appointments (
+    AppointmentID INT PRIMARY KEY AUTO_INCREMENT,
+    PatientID INT NOT NULL,
+    DoctorID INT NOT NULL,
+    AppointmentDate DATETIME NOT NULL,
+    Status ENUM('Scheduled', 'Completed', 'Cancelled') NOT NULL,
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+);
+
+CREATE TABLE Treatments (
+    TreatmentID INT PRIMARY KEY AUTO_INCREMENT,
+    AppointmentID INT NOT NULL,
+    Diagnosis VARCHAR(255) NOT NULL,
+    PrescribedMedication VARCHAR(255) NOT NULL,
+    TreatmentDate DATE NOT NULL,
+    FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID)
+);
+
+
+
+-- insert
+INSERT INTO Doctors (Name, Specialty, YearsOfExperience) VALUES
+('Dr.Maki', 'Cardiology', 100),
+('Dr. Mark', 'Neurology', 200),
+('Dr. Francis', 'Pediatrics', 369),
+('Dr. Gwapo', 'Orthopedics', 122);
+
+INSERT INTO Patients (Name, Age, Gender, ContactDetails) VALUES
+('Send Viral', 44, 'Male', 'send.lbj@sql.com'),
+('Idol', 7, 'Female', 'idol.ta@sql.com'),
+('Me core', 25, 'Male', 'me.s@sql.com');
+
+INSERT INTO Appointments (PatientID, DoctorID, AppointmentDate, Status) VALUES
+(1, 1, '2025-11-15 10:00:00', 'Scheduled'),
+(2, 2, '2025-12-16 11:00:00', 'Scheduled'),
+(3, 3, '2023-12-17 09:00:00', 'Completed');
+
+INSERT INTO Treatments (AppointmentID, Diagnosis, PrescribedMedication, TreatmentDate) VALUES
+(3, 'Labad sa ulo', 'Ibuprofen', '2023-10-17'),
+(3, 'Follow-up for Labad sa ulo', 'Paracetamol', '2023-10-24');
+
+
+
+
+-- fetch 
+SELECT Name, Specialty, YearsOfExperience FROM Doctors;
+
+SELECT AppointmentID, PatientID, DoctorID, AppointmentDate 
+FROM Appointments 
+WHERE Status = 'Scheduled' AND AppointmentDate > NOW();
+
+SELECT d.Name, COUNT(a.PatientID) AS PatientsTreated
+FROM Doctors d
+LEFT JOIN Appointments a ON d.DoctorID = a.DoctorID AND a.Status = 'Completed'
+GROUP BY d.DoctorID;
+
+SELECT p.Name, t.Diagnosis
+FROM Patients p
+JOIN Appointments a ON p.PatientID = a.PatientID
+JOIN Treatments t ON a.AppointmentID = t.AppointmentID;
+
+SELECT Name, Specialty, YearsOfExperience
+FROM Doctors
+ORDER BY YearsOfExperience DESC
+LIMIT 1;
