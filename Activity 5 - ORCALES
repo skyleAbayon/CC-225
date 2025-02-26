@@ -1,0 +1,74 @@
+CREATE TABLE Doctors (
+    DoctorID INT PRIMARY KEY,
+    Name VARCHAR(255),
+    Specialty VARCHAR(255),
+    YearsOfExperience INT
+);
+
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY,
+    Name VARCHAR(255),
+    Age INT,
+    Gender VARCHAR(10),
+    ContactDetails VARCHAR(255)
+);
+
+CREATE TABLE Appointments (
+    AppointmentID INT PRIMARY KEY,
+    PatientID INT,
+    DoctorID INT,
+    AppointmentDate DATE,
+    Status VARCHAR(50),
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+);
+
+CREATE TABLE Treatments (
+    TreatmentID INT PRIMARY KEY,
+    AppointmentID INT,
+    Diagnosis VARCHAR(255),
+    PrescribedMedication VARCHAR(255),
+    TreatmentDate DATE,
+    FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID)
+);
+
+INSERT INTO Doctors (DoctorID, Name, Specialty, YearsOfExperience) VALUES
+(1, 'Dr. Inday Garcia', 'General Medicine', 15),
+(2, 'Dr. Dodong Jake', 'Pediatrics', 8),
+(3, 'Dr. Marvin Fernandez', 'Cardiology', 12),
+(4, 'Dr. Lebron Reyes', 'Dentistry', 5);
+
+INSERT INTO Patients (PatientID, Name, Age, Gender, ContactDetails) VALUES
+(101, 'Arthon Manapao', 21, 'Male', '09123456789'),
+(102, 'Charles Pakingan', 45, 'Male', 'pakingan.charles@gmail.com'),
+(103, 'Elmera Narca', 28, 'Female', 'bebeng.elmera@ph.com');
+
+INSERT INTO Appointments (AppointmentID, PatientID, DoctorID, AppointmentDate, Status) VALUES
+(1001, 101, 1, '2025-03-10', 'Scheduled'),
+(1002, 102, 2, '2025-03-15', 'Scheduled'),
+(1003, 103, 3, '2025-03-05', 'Completed'),
+(1004, 101, 1, '2025-02-20', 'Completed');
+
+INSERT INTO Treatments (TreatmentID, AppointmentID, Diagnosis, PrescribedMedication, TreatmentDate) VALUES
+(2001, 1003, 'Sip-on (Common Cold)', 'Tambal nga herbal (Herbal medicine)', '2025-03-05'),
+(2002, 1004, 'Taas nga presyon (High Blood Pressure)', 'Tambal sa presyon (Blood pressure medication)', '2025-02-20');
+
+SELECT Name, Specialty, YearsOfExperience FROM Doctors;
+
+SELECT * FROM Appointments WHERE AppointmentDate >= CURRENT_DATE AND Status = 'Scheduled';
+
+SELECT D.Name, COUNT(DISTINCT A.PatientID) AS NumberOfPatientsTreated
+FROM Doctors D
+JOIN Appointments A ON D.DoctorID = A.DoctorID
+WHERE A.Status = 'Completed'
+GROUP BY D.DoctorID, D.Name;
+
+SELECT P.Name, T.Diagnosis
+FROM Patients P
+JOIN Appointments A ON P.PatientID = A.PatientID
+JOIN Treatments T ON A.AppointmentID = T.AppointmentID;
+
+SELECT Name, Specialty, YearsOfExperience
+FROM Doctors
+ORDER BY YearsOfExperience DESC
+LIMIT 1;
