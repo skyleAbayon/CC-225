@@ -46,24 +46,24 @@ INSERT INTO Patients (PatientID, Name, Age, Gender, ContactDetails) VALUES
 (3, 'Ryan jay', 45, 'Male', 'ryan.jay@example.com');
 
 INSERT INTO Appointments (AppointmentID, PatientID, DoctorID, AppointmentDate, Status) VALUES
-(1, 1, 1, '2025-02-20', 'Completed'),
-(2, 2, 2, '2025-02-21', 'Completed'),
-(3, 3, 3, '2025-02-22', 'Scheduled');
+(1, 1, 1, '2025-02-30', 'Completed'),
+(2, 2, 2, '2025-02-22', 'Completed'),
+(3, 3, 3, '2025-02-12', 'Scheduled');
 
 INSERT INTO Treatments (TreatmentID, AppointmentID, Diagnosis, PrescribedMedication, TreatmentDate) VALUES
-(1, 1, 'Hypertension', 'Lisinopril', '2025-02-20'),
-(2, 3, 'Fracture', 'Painkillers', '2025-02-22');
+(1, 1, 'Hypertension', 'Lisinopril', '2025-02-30'),
+(2, 3, 'Fracture', 'Painkiller', '2025-02-12');
 
 SELECT Name, Specialty, YearsOfExperience
 FROM Doctors;
 
 SELECT AppointmentID, PatientID, DoctorID, AppointmentDate
 FROM Appointments
-WHERE Status = 'Scheduled';
+WHERE Status = 'Completed';
 
 SELECT DoctorID, COUNT(DISTINCT PatientID) AS NumberOfPatients
 FROM Appointments
-WHERE Status = 'Completed'
+WHERE Status = 'Scheduled'
 GROUP BY DoctorID;
 
 SELECT Patients.Name AS PatientName, Treatments.Diagnosis
