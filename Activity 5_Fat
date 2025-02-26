@@ -1,0 +1,86 @@
+CREATE TABLE Doctors (
+    DoctorID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Specialty VARCHAR(50) NOT NULL,
+    YearsOfExperience INT NOT NULL
+);
+
+
+INSERT INTO Doctors (Name, Specialty, YearsOfExperience)  
+VALUES  
+    ('Dr. Maria Yvonne Fat', ' Psychology ', 12),  
+    ('Dr. Sheena Gamboa', ' Cardiologist', 5),  
+    ('Dr. Oreo Yorong', 'Orthopedics', 15),  
+    ('Dr. Joyce Araniego', 'Pediatrician', 5);  
+
+
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Age INT NOT NULL,
+    Gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    ContactDetails VARCHAR(300) NOT NULL
+);
+
+INSERT INTO Patients (Name, Age, Gender, ContactDetails)  
+VALUES  
+    ('luo Farmer', 30, 'Male', 'luo.farmer@email.com, 123-456-7890'),  
+    ('krishia malima', 41, 'Female', 'Malima.Krishia@email.com, 980-604-1210'),  
+    ('kharl bayot', 64, 'Other', 'bayot.Kharl@email.com, 466-799-1123');  
+
+CREATE TABLE Appointments (
+    AppointmentID INT PRIMARY KEY AUTO_INCREMENT,
+    PatientID INT NOT NULL,
+    DoctorID INT NOT NULL,
+    AppointmentDate DATETIME NOT NULL,
+    Status ENUM('Scheduled', 'Completed', 'Cancelled') NOT NULL,
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID) ON DELETE CASCADE,
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID) ON DELETE CASCADE
+);
+
+INSERT INTO Appointments (PatientID, DoctorID, AppointmentDate, Status)  
+VALUES  
+    (1, 1, '2027-05-01 11:00:00', 'Scheduled'),  
+    (2, 3, '2027-05-02 10:45:00', 'Scheduled'),  
+    (3, 2, '2027-05-03 08:50:00', 'Scheduled');  
+
+
+CREATE TABLE Treatments (
+    TreatmentID INT PRIMARY KEY AUTO_INCREMENT,
+    AppointmentID INT NOT NULL,
+    Diagnosis TEXT NOT NULL,
+    PrescribedMedication VARCHAR(255) NOT NULL,
+    TreatmentDate DATE NOT NULL,
+    FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID) ON DELETE CASCADE
+);
+
+INSERT INTO Treatments (AppointmentID, Diagnosis, PrescribedMedication, TreatmentDate)  
+VALUES  
+    (1, 'Hypertension', 'Biogekiss 10mg everyday', '2027-03-01'),  
+    (2, 'Fever', 'Paracetamol 150mg every 6 hours', '2027-03-02');  
+    
+
+
+SELECT Name, Specialty, YearsOfExperience  
+FROM Doctors;  
+
+SELECT AppointmentID, PatientID, DoctorID, AppointmentDate, Status  
+FROM Appointments  
+WHERE Status = 'Scheduled'  
+AND AppointmentDate >= NOW();  
+
+SELECT d.Name AS DoctorName, COUNT(t.TreatmentID) AS PatientsTreated  
+FROM Doctors d  
+JOIN Appointments a ON d.DoctorID = a.DoctorID  
+JOIN Treatments t ON a.AppointmentID = t.AppointmentID  
+GROUP BY d.DoctorID;  
+
+SELECT p.Name AS PatientName, t.Diagnosis  
+FROM Patients p  
+JOIN Appointments a ON p.PatientID = a.PatientID  
+JOIN Treatments t ON a.AppointmentID = t.AppointmentID;  
+
+SELECT Name, Specialty, YearsOfExperience  
+FROM Doctors  
+ORDER BY YearsOfExperience DESC  
+LIMIT 1;
