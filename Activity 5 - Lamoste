@@ -47,9 +47,9 @@ INSERT INTO Doctors (doctor_id, name, specialty, experience) VALUES
 
 -- Inserting patients
 INSERT INTO Patients (patient_id, name, age, gender, contact_details) VALUES
-(1, 'Ivtill Unshrak', 25, 'Female', 'alnstmxm@example.com'),
-(2, 'Mizua Nigen', 40, 'Male', 'alnstfxf@example.com'),
-(3, 'Hyuka Phanperu', 30, 'Male', 'alnstfxm@example.com');
+(1, 'Ivtill Unshrak', 10, 'Female', 'alnstmxm@example.com'),
+(2, 'Mizua Nigen', 15, 'Male', 'alnstfxf@example.com'),
+(3, 'Hyuka Phanperu', 5, 'Male', 'alnstfxm@example.com');
 
 -- Scheduling appointments
 INSERT INTO Appointments (appointment_id, patient_id, doctor_id, appointment_date, status) VALUES
@@ -59,8 +59,8 @@ INSERT INTO Appointments (appointment_id, patient_id, doctor_id, appointment_dat
 
 -- Recording treatments for completed appointments
 INSERT INTO Treatments (treatment_id, appointment_id, diagnosis, medication, treatment_date) VALUES
-(1, 2, 'Migraine', 'Paracetamol', '2025-02-20'),
-(2, 3, 'Flu', 'Antibiotics', '2025-02-22');
+(1, 2, 'Common Cold', 'DayQuil', '2025-02-20'),
+(2, 3, 'Indigestion', 'Mylanta', '2025-02-22');
 
 
 
