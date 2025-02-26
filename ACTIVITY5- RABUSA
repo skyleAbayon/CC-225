@@ -1,0 +1,73 @@
+CREATE TABLE MedicalStaff (
+    staff_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    specialization VARCHAR(100) NOT NULL,
+    experience_years INT NOT NULL
+);
+
+CREATE TABLE Clients (
+    client_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    age INT NOT NULL,
+    gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    contact_info VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Schedules (
+    schedule_id INT PRIMARY KEY AUTO_INCREMENT,
+    client_id INT NOT NULL,
+    staff_id INT NOT NULL,
+    schedule_date DATE NOT NULL,
+    status ENUM('Booked', 'Finished', 'Canceled') NOT NULL,
+    FOREIGN KEY (client_id) REFERENCES Clients(client_id),
+    FOREIGN KEY (staff_id) REFERENCES MedicalStaff(staff_id)
+);
+
+CREATE TABLE CarePlans (
+    care_id INT PRIMARY KEY AUTO_INCREMENT,
+    schedule_id INT NOT NULL,
+    diagnosis TEXT NOT NULL,
+    medication TEXT NOT NULL,
+    care_date DATE NOT NULL,
+    FOREIGN KEY (schedule_id) REFERENCES Schedules(schedule_id)
+);
+
+INSERT INTO MedicalStaff (name, specialization, experience_years) VALUES
+('Dr. Ava Smith', 'Dermatology', 15),
+('Dr. Leo Brown', 'Oncology', 10),
+('Dr. Mia Johnson', 'Psychiatry', 8),
+('Dr. Noah Davis', 'Gastroenterology', 20);
+
+INSERT INTO Clients (name, age, gender, contact_info) VALUES
+('Alice Green', 30, 'Female', 'alice.green@example.com'),
+('Bob White', 45, 'Male', 'bob.white@example.com'),
+('Charlie Blue', 25, 'Other', 'charlie.blue@example.com');
+
+INSERT INTO Schedules (client_id, staff_id, schedule_date, status) VALUES
+(1, 1, '2025-04-05', 'Finished'),
+(2, 3, '2025-04-08', 'Booked'),
+(3, 4, '2025-04-10', 'Finished');
+
+INSERT INTO CarePlans (schedule_id, diagnosis, medication, care_date) VALUES
+(1, 'Eczema', 'Topical Corticosteroids', '2025-04-05'),
+(3, 'Gastritis', 'Antacids', '2025-04-10');
+
+SELECT name, specialization, experience_years FROM MedicalStaff;
+
+SELECT * FROM Schedules WHERE status = 'Booked';
+
+SELECT MedicalStaff.name, COUNT(Schedules.schedule_id) AS total_clients
+FROM MedicalStaff
+JOIN Schedules ON MedicalStaff.staff_id = Schedules.staff_id
+WHERE Schedules.status = 'Finished'
+GROUP BY MedicalStaff.name;
+
+SELECT Clients.name, CarePlans.diagnosis
+FROM Clients
+JOIN Schedules ON Clients.client_id = Schedules.client_id
+JOIN CarePlans ON Schedules.schedule_id = CarePlans.schedule_id;
+
+SELECT name, specialization, experience_years
+FROM MedicalStaff
+ORDER BY experience_years DESC
+LIMIT 1;
