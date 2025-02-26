@@ -1,0 +1,82 @@
+SHOW DATABASES;
+USE activity;
+
+-- Create the Authors table
+CREATE TABLE Authors (
+  author_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  birth_year DATE
+);
+
+-- Insert data into Authors table
+INSERT INTO Authors(name, birth_year) VALUES
+('Zilong', '1980-08-06'),
+('Lukas', '2013-09-02'),
+('Suyou', '1990-10-01'),
+('Mathilda', '1879-04-08'),
+('Lelian', '2003-11-06');
+
+-- View Authors table
+SELECT * FROM Authors;
+
+-- Create the Books table
+CREATE TABLE Books (
+  book_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  published_year INTEGER,
+  genre VARCHAR(100),
+  author_id INTEGER,
+  FOREIGN KEY (author_id) REFERENCES Authors(author_id) ON DELETE CASCADE
+);
+
+-- Insert data into Books table (ensure author_id exists in Authors table)
+INSERT INTO Books(title, published_year, genre, author_id) VALUES
+('Cardia Riverlands', 2000, 'Fiction', 1),
+('Saber Squad', 2001, 'Tragedy', 2),
+('Oriental Fighters', 1990, 'Action', 3),
+('Castle Prince', 1999, 'Romance', 4),
+('Blakdyak', 2003, 'Comedy', 5);
+
+-- View Books table
+SELECT * FROM Books;
+
+-- Create the Members table
+CREATE TABLE Members (
+  member_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  join_date DATE
+);
+
+-- Insert data into Members table
+INSERT INTO Members(name, email, join_date) VALUES
+('John ', 'john@example.com', '2023-01-01'),
+('Jane ', 'jane@example.com', '2023-02-15'),
+(' Brown', 'brown@example.com', '2023-03-20'),
+(' White', 'white@example.com', '2023-04-10'),
+('Charlie', 'charlie@example.com', '2023-05-25');
+
+-- View Members table
+SELECT * FROM Members;
+
+-- Create the BorrowedBooks table
+CREATE TABLE BorrowedBooks (
+  borrow_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  book_id INTEGER,
+  member_id INTEGER,
+  borrow_date DATE,
+  return_date DATE,  
+  FOREIGN KEY (book_id) REFERENCES Books(book_id) ON DELETE CASCADE,
+  FOREIGN KEY (member_id) REFERENCES Members(member_id) ON DELETE CASCADE
+);
+
+-- Insert data into BorrowedBooks table
+INSERT INTO BorrowedBooks(book_id, member_id, borrow_date, return_date) VALUES
+(1, 1, '2024-01-10', '2024-01-20'),
+(2, 2, '2024-01-15', '2024-01-25'),
+(3, 3, '2024-02-01', '2024-02-10'),
+(4, 4, '2024-02-05', '2024-02-15'),
+(5, 5, '2024-02-10', '2024-02-20');
+
+-- View BorrowedBooks table
+SELECT * FROM BorrowedBooks;

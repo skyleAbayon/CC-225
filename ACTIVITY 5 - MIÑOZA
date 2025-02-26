@@ -1,0 +1,81 @@
+
+CREATE DATABASE HospitalDB;
+USE HospitalDB;  -- Use the database (for MySQL users)
+
+CREATE TABLE Doctors (
+    doctor_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    specialty VARCHAR(50) NOT NULL,
+    years_experience INT NOT NULL
+);
+
+CREATE TABLE Patients (
+    patient_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    age INT NOT NULL,
+    gender VARCHAR(10) NOT NULL,
+    contact_details VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Appointments (
+    appointment_id SERIAL PRIMARY KEY,
+    patient_id INT NOT NULL,
+    doctor_id INT NOT NULL,
+    appointment_date DATE NOT NULL,
+    status VARCHAR(20) CHECK (status IN ('Scheduled', 'Completed', 'Cancelled')),
+    FOREIGN KEY (patient_id) REFERENCES Patients(patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id)
+);
+
+CREATE TABLE Treatments (
+    treatment_id SERIAL PRIMARY KEY,
+    appointment_id INT NOT NULL,
+    diagnosis TEXT NOT NULL,
+    prescribed_medication TEXT NOT NULL,
+    treatment_date DATE NOT NULL,
+    FOREIGN KEY (appointment_id) REFERENCES Appointments(appointment_id)
+);
+
+
+INSERT INTO Doctors (name, specialty, years_experience) VALUES
+('Dr. Smith', 'Cardiology', 15),
+('Dr. Johnson', 'Neurology', 10),
+('Dr. Brown', 'Dermatology', 8),
+('Dr. Williams', 'Orthopedics', 12);
+
+INSERT INTO Patients (name, age, gender, contact_details) VALUES
+('Alice Johnson', 30, 'Female', 'alice@example.com'),
+('Bob Smith', 45, 'Male', 'bob@example.com'),
+('Charlie Davis', 27, 'Male', 'charlie@example.com');
+
+INSERT INTO Appointments (patient_id, doctor_id, appointment_date, status) VALUES
+(1, 1, '2025-02-28', 'Scheduled'),
+(2, 2, '2025-02-20', 'Completed'),
+(3, 3, '2025-02-18', 'Completed');
+
+INSERT INTO Treatments (appointment_id, diagnosis, prescribed_medication, treatment_date) VALUES
+(2, 'Migraine', 'Painkillers', '2025-02-20'),
+(3, 'Skin Rash', 'Antibiotic Cream', '2025-02-18');
+
+
+1. List all doctors along with their specialty and experience
+SELECT * FROM Doctors;
+
+2. Find all upcoming appointments that are still scheduled
+SELECT * FROM Appointments WHERE status = 'Scheduled';
+
+-- 3. Count how many patients each doctor has treated
+SELECT d.name AS doctor_name, COUNT(t.treatment_id) AS total_treatments
+FROM Doctors d
+LEFT JOIN Appointments a ON d.doctor_id = a.doctor_id
+LEFT JOIN Treatments t ON a.appointment_id = t.appointment_id
+GROUP BY d.name;
+
+-- 4. Retrieve all patients who have received treatments, along with their diagnosis
+SELECT p.name AS patient_name, t.diagnosis
+FROM Patients p
+JOIN Appointments a ON p.patient_id = a.patient_id
+JOIN Treatments t ON a.appointment_id = t.appointment_id;
+
+-- 5. Find the most experienced doctor in the hospital
+SELECT * FROM Doctors ORDER BY years_experience DESC LIMIT 1;

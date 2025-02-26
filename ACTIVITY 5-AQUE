@@ -1,0 +1,88 @@
+-- Create Tables
+CREATE TABLE Doctors (
+    doctor_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    specialty VARCHAR(50),
+    years_of_experience INT
+);
+
+CREATE TABLE Patients (
+    patient_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    age INT,
+    gender VARCHAR(10),
+    contact_details VARCHAR(200)
+);
+
+CREATE TABLE Appointments (
+    appointment_id INT PRIMARY KEY,
+    patient_id INT,
+    doctor_id INT,
+    appointment_date DATETIME,
+    status VARCHAR(20),
+    FOREIGN KEY (patient_id) REFERENCES Patients(patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id)
+);
+
+CREATE TABLE Treatments (
+    treatment_id INT PRIMARY KEY,
+    appointment_id INT,
+    diagnosis VARCHAR(200),
+    prescribed_medication VARCHAR(200),
+    treatment_date DATE,
+    FOREIGN KEY (appointment_id) REFERENCES Appointments(appointment_id)
+);
+
+-- Insert Sample Data
+INSERT INTO Doctors VALUES
+(1, 'Dr. James', 'Orthopedics', 20),
+(2, 'Dr. Akwe', 'Neurology', 10),
+(3, 'Dr. Manlimos', 'Orthopedics', 5),
+(4, 'Dr. Begg', 'Anesthesiology', 30);
+
+INSERT INTO Patients VALUES
+(1, 'Ma  Rites', 45, 'Female', 'Phone: 123-4567, Email: Marites@gmail.com'),
+(2, 'Da Whoh', 32, 'Female', 'Phone: 765-4321, Email: Dawhoh@gmail.com'),
+(3, 'Oh Mayg', 28, 'Male', 'Phone: 890-0103, Email: Ohmayg@mail.com');
+
+INSERT INTO Appointments VALUES
+(1, 1, 1, '2025-03-25 09:00:00', 'Scheduled'),
+(2, 2, 3, '2025-04-02 13:00:00', 'Scheduled'),
+(3, 3, 2, '2024-02-04 11:00:00', 'Completed'),
+(4, 1, 4, '2024-02-20 15:00:00', 'Completed');
+
+INSERT INTO Treatments VALUES
+(1, 3, 'Migraine', 'Sumatriptan 50mg', '2024-02-25'),
+(2, 4, 'Sprained ankle', 'Ibuprofen 400mg', '2024-02-20');
+
+-- Queries for Step 3
+
+-- 1. List all doctors with their specialty and experience
+SELECT name, specialty, years_of_experience 
+FROM Doctors;
+
+-- 2. Find all upcoming appointments that are still scheduled
+SELECT a.appointment_id, p.name as patient_name, d.name as doctor_name, 
+       a.appointment_date, a.status
+FROM Appointments a
+JOIN Patients p ON a.patient_id = p.patient_id
+JOIN Doctors d ON a.doctor_id = d.doctor_id
+WHERE a.status = 'Scheduled';
+
+-- 3. Count how many patients each doctor has treated
+SELECT d.name, COUNT(DISTINCT t.treatment_id) as patients_treated
+FROM Doctors d
+LEFT JOIN Appointments a ON d.doctor_id = a.doctor_id
+LEFT JOIN Treatments t ON a.appointment_id = t.appointment_id
+GROUP BY d.doctor_id, d.name;
+
+-- 4. Retrieve all patients who have received treatments
+SELECT DISTINCT p.name, t.diagnosis, t.prescribed_medication
+FROM Patients p
+JOIN Appointments a ON p.patient_id = a.patient_id
+JOIN Treatments t ON a.appointment_id = t.appointment_id;
+
+-- 5. Find the most experienced doctor
+SELECT name, specialty, years_of_experience
+FROM Doctors
+WHERE years_of_experience = (SELECT MAX(years_of_experience) FROM Doctors);

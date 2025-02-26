@@ -1,0 +1,72 @@
+CREATE TABLE Doctors (
+  doctor_id  (INT, PRIMARY KEY),
+  name  (VARCHAR(255))
+  specialty  (VARCHAR(255))
+  years_of_experience  (INT),
+);
+
+CREATE TABLEPatients (
+   patient_id  (INT, PRIMARY KEY)
+   name  (VARCHAR(255))
+   age  (INT)
+   gender  (VARCHAR(50))
+   contact_details  (VARCHAR(255))
+);
+ 
+CREATE TABLE Appointments (
+   appointment_id  (INT, PRIMARY KEY)
+   patient_id  (INT, FOREIGN KEY referencing Patients.patient_id)
+  doctor_id  (INT, FOREIGN KEY referencing Doctors.doctor_id)       
+  appointment date (DATE)
+  status  (ENUM('Scheduled', 'Completed', 'Cancelled'))
+);
+ 
+CREATE TABLE Treatments (
+   treatment_id  (INT, PRIMARY KEY)
+   appointment_id  (INT, FOREIGN KEY referencing    Appointments.appointment_id)
+ diagnosis  (TEXT)
+ prescribed_medication  (TEXT)
+ treatment_date  (DATE)
+);
+
+INSERT INTO Doctors (doctor_id, name, specialty, years_of_experience) VALUES
+(1, 'Dr. Smith', 'Cardiology', 15),
+(2, 'Dr. Jones', 'Neurology', 8),
+(3, 'Dr. Brown', 'Oncology', 20),
+(4, 'Dr. Davis', 'Pediatrics', 5);
+
+INSERT INTO Patients (patient_id, name, age, gender, contact_details) VALUES
+(1, 'Rry', 28, 'Male', 'rry@email.com'),
+(2, 'Ethan', 27, 'Male', 'ethan@email.com'),
+(3, 'Minmin', 21, 'Female', 'minmin@email.com');
+
+INSERT INTO Appointments (appointment_id, patient_id, doctor_id, appointment_date, status) VALUES
+(1, 1, 1, '2024-03-15', 'Completed'),
+(2, 2, 3, '2024-03-20', 'Completed'),
+(3, 3, 2, '2024-03-25', 'Scheduled');
+
+INSERT INTO Treatments (treatment_id, appointment_id, diagnosis, prescribed_medication, treatment_date) VALUES
+(1, 1, 'Heart condition', 'Aspirin', '2024-03-15'),
+(2, 2, 'Cancer', 'Chemotherapy', '2024-03-20');
+
+SELECT name, specialty, years_of_experience
+FROM Doctors;
+
+SELECT *
+FROM Appointments
+WHERE status = 'Scheduled' AND appointment_date >= DATE('now');
+
+SELECT d.name AS doctor_name, COUNT(DISTINCT a.patient_id) AS patient_count
+FROM Doctors d
+LEFT JOIN Appointments a ON d.doctor_id = a.doctor_id
+GROUP BY doctor_name;
+
+SELECT DISTINCT p.name AS patient_name, t.diagnosis
+FROM Patients p
+JOIN Appointments a ON p.patient_id = a.patient_id
+JOIN Treatments t ON a.appointment_id = t.appointment_id;
+
+SELECT name, years_of_experience
+FROM Doctors
+ORDER BY years_of_experience DESC
+LIMIT 1;
