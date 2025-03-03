@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Awesome App - Login to Get Started</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+        main {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+        .hero {
+            text-align: center;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #ffffff;
+            color: #764ba2;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .login-form {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ffffff;
+            color: #764ba2;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .submit-btn:hover {
+            background-color: #f0f0f0;
+        }
+        footer {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            padding: 20px 0;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Awesome App</div>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#about">About</a>
+                    <a href="#contact">Contact</a>
+                    <a href="#" id="loginToggle">Login</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="hero">
+                <h1>Welcome to Awesome App</h1>
+                <p>Experience the next level of productivity with our innovative platform. Streamline your workflow, collaborate seamlessly, and achieve more in less time.</p>
+                <a href="#" class="cta-button">Get Started</a>
+                
+                <div class="login-form" id="loginForm" style="display: none;">
+                    <form id="authForm">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="submit-btn">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Awesome App. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const loginToggle = document.getElementById('loginToggle');
+        const loginForm = document.getElementById('loginForm');
+        const authForm = document.getElementById('authForm');
+        let isLoggedIn = false;
+
+        loginToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (isLoggedIn) {
+                // Logout logic
+                isLoggedIn = false;
+                loginToggle.textContent = 'Login';
+                loginForm.style.display = 'none';
+                alert('You have been logged out.');
+            } else {
+                // Show login form
+                loginForm.style.display = 'block';
+            }
+        });
+
+        authForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Here you would typically send a request to your server to authenticate the user
+            // For this example, we'll just simulate a successful login
+            isLoggedIn = true;
+            loginToggle.textContent = 'Logout';
+            loginForm.style.display = 'none';
+            alert('You have been logged in successfully!');
+        });
+    </script>
+</body>
+</html>
+
