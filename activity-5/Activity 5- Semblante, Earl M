@@ -1,0 +1,99 @@
+-- Create Doctors Table
+CREATE TABLE Doctors (
+    DoctorID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Specialty VARCHAR(100) NOT NULL,
+    YearsOfExperience INT
+);
+
+-- Create Patients Table
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Age INT,
+    Gender VARCHAR(50),
+    ContactDetails VARCHAR(255)
+);
+
+-- Create Appointments Table
+CREATE TABLE Appointments (
+    AppointmentID INT PRIMARY KEY AUTO_INCREMENT,
+    PatientID INT,
+    DoctorID INT,
+    AppointmentDate DATETIME,
+    Status ENUM('Scheduled', 'Completed', 'Cancelled'),
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+);
+
+-- Create Treatments Table
+CREATE TABLE Treatments (
+    TreatmentID INT PRIMARY KEY AUTO_INCREMENT,
+    AppointmentID INT,
+    Diagnosis TEXT,
+    PrescribedMedication TEXT,
+    TreatmentDate DATE,
+    FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID)
+);
+
+-- Add Doctors
+INSERT INTO Doctors (Name, Specialty, YearsOfExperience)
+VALUES 
+('Dr. Oscar', 'Cardiology', 11),
+('Dr. Jotaro', 'Neurology', 17),
+('Dr. Valenciano', 'Dermatology', 10),
+('Dr. Semblante', 'Neurology', 15);
+
+-- Add Patients
+INSERT INTO Patients (Name, Age, Gender, ContactDetails)
+VALUES 
+('Earl', 21, 'Male', 'don2x.earl.17@example.com'),
+('Mary', 30, 'Female', 'MaryJ@example.com'),
+('Dias', 25, 'Female', 'Dias@example.com');
+
+-- Schedule Appointments
+INSERT INTO Appointments (PatientID, DoctorID, AppointmentDate, Status)
+VALUES 
+(1, 1, '2025-05-21 10:00:00', 'Scheduled'),
+(2, 2, '2025-05-22 11:00:00', 'Scheduled'),
+(3, 3, '2025-05-23 09:00:00', 'Scheduled');
+
+-- Record Completed Treatments
+INSERT INTO Treatments (AppointmentID, Diagnosis, PrescribedMedication, TreatmentDate)
+VALUES 
+(1, 'Saka ang tae sa utok', 'Inom tubig daghan', '2024-02-20'),
+(2, 'takigan sa kainit', 'Inom tubig init', '2024-02-15');
+
+-- Update Appointments to Mark Some as Completed
+UPDATE Appointments
+SET Status = 'Completed'
+WHERE AppointmentID IN (1, 2);
+
+-- 1: List all doctors along with their specialty and experience
+SELECT Name, Specialty, YearsOfExperience
+FROM Doctors;
+
+-- 2: Find all upcoming appointments that are still scheduled
+SELECT AppointmentID, PatientID, DoctorID, AppointmentDate
+FROM Appointments
+WHERE Status = 'Scheduled' AND AppointmentDate > NOW();
+SELECT * FROM Appointments;
+
+-- 3: Count how many patients each doctor has treated
+SELECT d.Name, COUNT(a.PatientID) AS PatientsTreated
+FROM Doctors d
+JOIN Appointments a ON d.DoctorID = a.DoctorID
+WHERE a.Status = 'Completed'
+GROUP BY d.Name;
+
+-- 4: Retrieve all patients who have received treatments, along with their diagnosis
+SELECT p.Name, t.Diagnosis
+FROM Patients p
+JOIN Appointments a ON p.PatientID = a.PatientID
+JOIN Treatments t ON a.AppointmentID = t.AppointmentID;
+
+-- 5: Find the most experienced doctor in the hospital
+SELECT Name, YearsOfExperience
+FROM Doctors
+ORDER BY YearsOfExperience DESC
+LIMIT 1;

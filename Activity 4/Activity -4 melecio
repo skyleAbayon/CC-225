@@ -1,0 +1,79 @@
+CREATE TABLE Authors (
+    author_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL
+);
+
+INSERT INTO Authors (name) VALUES 
+('J.K. Rowling'),
+('George R.R. Martin'),
+('J.R.R. Tolkien'),
+('Agatha Christie'),
+('Stephen King');
+
+CREATE TABLE Books (
+    book_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    author_id INT,
+    publication_year INT,
+    FOREIGN KEY (author_id) REFERENCES Authors(author_id)
+);
+
+INSERT INTO Books (title, author_id, publication_year) VALUES 
+('Harry Potter and the Sorcerer\'s Stone', 1, 1997),
+('A Game of Thrones', 2, 1996),
+('The Lord of the Rings', 3, 1954),
+('Murder on the Orient Express', 4, 1934),
+('The Shining', 5, 1977);
+
+CREATE TABLE Members (
+    member_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL
+);
+
+INSERT INTO Members (name) VALUES 
+('Alice Johnson'),
+('Bob Smith'),
+('Charlie Davis');
+
+CREATE TABLE BorrowedBooks (
+    borrow_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT,
+    member_id INT,
+    borrow_date DATE,
+    return_date DATE NULL,
+    FOREIGN KEY (book_id) REFERENCES Books(book_id),
+    FOREIGN KEY (member_id) REFERENCES Members(member_id)
+);
+
+INSERT INTO BorrowedBooks (book_id, member_id, borrow_date, return_date) VALUES
+(1, 1, '2024-01-10', NULL),
+(2, 2, '2024-02-15', '2024-02-20'),
+(3, 3, '2024-02-05', NULL),
+(4, 1, '2024-02-08', '2024-02-18'),
+(5, 2, '2024-02-12', NULL);
+
+SELECT * FROM Authors;
+SELECT * FROM Books;
+SELECT * FROM Members;
+SELECT * FROM BorrowedBooks;
+
+SELECT * FROM Books WHERE publication_year > 2000;
+
+SELECT DISTINCT Members.member_id, Members.name 
+FROM Members
+JOIN BorrowedBooks ON Members.member_id = BorrowedBooks.member_id;
+
+SELECT Books.book_id, Books.title, Authors.name AS author_name
+FROM Books
+JOIN Authors ON Books.author_id = Authors.author_id;
+
+SELECT Books.book_id, Books.title, Members.name AS borrowed_by, BorrowedBooks.borrow_date
+FROM BorrowedBooks
+JOIN Books ON BorrowedBooks.book_id = Books.book_id
+JOIN Members ON BorrowedBooks.member_id = Members.member_id
+WHERE BorrowedBooks.return_date IS NULL;
+
+SELECT Authors.name, COUNT(Books.book_id) AS book_count
+FROM Authors
+JOIN Books ON Authors.author_id = Books.author_id
+GROUP BY Authors.name;

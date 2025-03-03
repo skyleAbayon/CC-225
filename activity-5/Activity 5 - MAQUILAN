@@ -1,0 +1,73 @@
+CREATE TABLE Doctors (
+    doctor_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    specialty VARCHAR(100) NOT NULL,
+    years_experience INT NOT NULL
+);
+
+CREATE TABLE Patients (
+    patient_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    age INT NOT NULL,
+    gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    contact_details VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Appointments (
+    appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT,
+    doctor_id INT,
+    appointment_date DATE NOT NULL,
+    status ENUM('Scheduled', 'Completed', 'Cancelled') NOT NULL,
+    FOREIGN KEY (patient_id) REFERENCES Patients(patient_id),
+    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id)
+);
+
+CREATE TABLE Treatments (
+    treatment_id INT AUTO_INCREMENT PRIMARY KEY,
+    appointment_id INT,
+    diagnosis VARCHAR(255) NOT NULL,
+    prescribed_medication VARCHAR(255),
+    treatment_date DATE NOT NULL,
+    FOREIGN KEY (appointment_id) REFERENCES Appointments(appointment_id)
+);
+
+INSERT INTO Doctors (name, specialty, years_experience) VALUES
+('Dr. Rafael Salada', 'Cardiology', 10),
+('Dr. Rey Damole', 'Neurology', 15),
+('Dr. Mark Zuckerberg', 'Pediatrics', 8),
+('Dr. Sarah Geronimo', 'Orthopedics', 12);
+
+INSERT INTO Patients (name, age, gender, contact_details) VALUES
+('Alice Green', 30, 'Female', 'alice@example.com'),
+('Bob White', 45, 'Male', 'bob@example.com'),
+('Charlie Black', 25, 'Male', 'charlie@example.com');
+
+INSERT INTO Appointments (patient_id, doctor_id, appointment_date, status) VALUES
+(1, 1, '2025-02-20', 'Scheduled'),
+(2, 2, '2025-02-21', 'Completed'),
+(3, 3, '2025-02-22', 'Completed');
+
+INSERT INTO Treatments (appointment_id, diagnosis, prescribed_medication, treatment_date) VALUES
+(2, 'Migraine', 'Painkillers', '2025-02-21'),
+(3, 'Flu', 'Antibiotics', '2025-02-22');
+
+SELECT * FROM Doctors;
+
+SELECT * FROM Appointments WHERE status = 'Scheduled';
+
+SELECT d.name AS doctor_name, COUNT(a.appointment_id) AS patients_treated
+FROM Doctors d
+JOIN Appointments a ON d.doctor_id = a.doctor_id
+WHERE a.status = 'Completed'
+GROUP BY d.name;
+
+SELECT p.name AS patient_name, t.diagnosis, t.prescribed_medication, t.treatment_date
+FROM Patients p
+JOIN Appointments a ON p.patient_id = a.patient_id
+JOIN Treatments t ON a.appointment_id = t.appointment_id;
+
+SELECT name, specialty, years_experience
+FROM Doctors
+ORDER BY years_experience DESC
+LIMIT 1;

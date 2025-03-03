@@ -1,0 +1,76 @@
+-- create
+CREATE TABLE DOCTORS (
+  doctor_id INTEGER PRIMARY KEY,
+  name VARCHAR(255),
+  specialty VARCHAR(100),
+  years_exp INTEGER
+);
+
+CREATE TABLE PATIENTS (
+  patient_id INTEGER PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  age INTEGER,
+  gender VARCHAR(10), 
+  contact_dets VARCHAR(255)
+);
+
+CREATE TABLE APPOINTMENTS (
+  appointment_id INTEGER PRIMARY KEY,
+  patient_id INTEGER,
+  doctor_id INTEGER,
+  appointment_date DATE,
+  status VARCHAR(20),
+  FOREIGN KEY (patient_id) REFERENCES PATIENTS(patient_id),
+  FOREIGN KEY (doctor_id) REFERENCES DOCTORS(doctor_id)
+);
+
+CREATE TABLE TREATMENTS (
+  treatment_id INTEGER PRIMARY KEY,
+  appointment_id INTEGER,
+  diagnosis VARCHAR(255), 
+  prescribed_med VARCHAR(255),
+  treatment_date DATE,
+  FOREIGN KEY (appointment_id) REFERENCES APPOINTMENTS(appointment_id)
+);
+
+-- insert
+INSERT INTO DOCTORS (doctor_id, name, specialty, years_exp) VALUES (1, 'Dr. Smith', 'Cardiology', 10);
+INSERT INTO DOCTORS (doctor_id, name, specialty, years_exp) VALUES (21, 'Dr. Jones', 'Neurology', 5);
+INSERT INTO DOCTORS (doctor_id, name, specialty, years_exp) VALUES (31, 'Dr. Barbara', 'Pediatrics', 15);
+INSERT INTO DOCTORS (doctor_id, name, specialty, years_exp) VALUES (41, 'Dr. Ken', 'Dermatology', 8);
+
+INSERT INTO PATIENTS (patient_id, name, age, gender, contact_dets) VALUES (101, 'Alice White', 55, 'Female', 'alice.white@gmail.com');
+INSERT INTO PATIENTS (patient_id, name, age, gender, contact_dets) VALUES (201, 'Julian Hopp', 50, 'Male', 'jhopp@gmail.com');
+INSERT INTO PATIENTS (patient_id, name, age, gender, contact_dets) VALUES (301, 'Charlie Green', 28, 'Male', 'charlie.green@gmail.com');
+
+INSERT INTO APPOINTMENTS (appointment_id, patient_id, doctor_id, appointment_date, status) VALUES (1001, 101, 1, '2023-10-27', 'Completed');
+INSERT INTO APPOINTMENTS (appointment_id, patient_id, doctor_id, appointment_date, status) VALUES (1002, 201, 21, '2023-10-28', 'Completed');
+INSERT INTO APPOINTMENTS (appointment_id, patient_id, doctor_id, appointment_date, status) VALUES (1003, 301, 31, '2025-02-28', 'Scheduled');
+
+INSERT INTO TREATMENTS (treatment_id, appointment_id, diagnosis, prescribed_med, treatment_date) VALUES (2001, 1001, 'Hypertension', 'Lisinopril', '2023-10-27');
+INSERT INTO TREATMENTS (treatment_id, appointment_id, diagnosis, prescribed_med, treatment_date) VALUES (2002, 1002, 'Migraine', 'Sumatriptan', '2023-10-28');
+
+-- fetch
+SELECT name, specialty, years_exp
+FROM DOCTORS;
+
+SELECT appointment_id, patient_id, doctor_id, appointment_date
+FROM APPOINTMENTS
+WHERE status = 'Scheduled' AND 
+appointment_date >= CURRENT_DATE;
+
+SELECT d.name, COUNT(DISTINCT a.patient_id) AS PatientsTreated
+FROM DOCTORS d
+JOIN APPOINTMENTS a ON d.doctor_id = a.doctor_id
+JOIN TREATMENTS t ON a.appointment_id = t.appointment_id
+GROUP BY d.name;
+
+SELECT p.name, t.diagnosis
+FROM PATIENTS p
+JOIN APPOINTMENTS a ON p.patient_id = a.patient_id
+JOIN TREATMENTS t ON a.appointment_id = t.appointment_id;
+
+SELECT name, specialty, years_exp
+FROM DOCTORS
+ORDER BY years_exp DESC 
+LIMIT 1;
