@@ -1,5 +1,0 @@
-SELECT Student_Class.Name, Class_Schedule.class_name, Class_Schedule.class_schedule
-FROM Student_Class
-JOIN Class_Schedule ON Student_Class.Id = Class_Schedule.student_id
-WHERE Student_Class.Name = 'Kim makaminus'
-  AND (Class_Schedule.class_name = 'CC225' OR Class_Schedule.class_name = 'filipino' OR Class_Schedule.class_name = 'english');
